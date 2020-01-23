@@ -1,38 +1,32 @@
 require './timeformatter.rb'
 class App
-  FORMATS = %w[year month day hour minute second].freeze
-
   def call(env)
     request = Rack::Request.new(env)
-    if request.fullpath[1..12] != 'time?format='
-      status = 404
-      body = ["Page not found (404)\n"]
+    if check_url(request)
+      response_with(404, "Page not found (404)\n")
     else
-      params = request.params['format'].split(',')
-      processing = TimeFormatter.new(params)
-      diff = params - FORMATS
-      if diff.empty?
-        status = 200
-        body = [processing.result]
-      else
-        status = 400
-        body = ["Unknown time format [#{diff.join(', ')}]\n"]
-      end
+      process_request(request)
     end
-    [status, headers, body]
   end
 
-  private
-
-  def status
-    200
+  def check_url(request)
+    request.fullpath[1..12] != 'time?format='
   end
 
-  def headers
-    { 'Content-Type' => 'text/plain' }
+  def response_with(code, message)
+    response = Rack::Response.new
+    response.status = code
+    response['Content-Type'] = 'text/plain'
+    response.write message
+    response.finish
   end
 
-  def body
-    nil
+  def process_request(request)
+    processing = TimeFormatter.new(request.params['format'].split(','))
+    if processing.valid?
+      response_with(200, processing.result)
+    else
+      response_with(400, "Unknown time format [#{processing.excess.join(',')}] \n")
+    end
   end
 end
