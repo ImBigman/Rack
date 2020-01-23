@@ -2,14 +2,14 @@ require './timeformatter.rb'
 class App
   def call(env)
     request = Rack::Request.new(env)
-    if check_url(request)
+    if valid_url?(request)
       response_with(404, "Page not found (404)\n")
     else
       process_request(request)
     end
   end
 
-  def check_url(request)
+  def valid_url?(request)
     request.fullpath[1..12] != 'time?format='
   end
 

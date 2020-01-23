@@ -8,10 +8,13 @@ class TimeFormatter
   end
 
   def result
+    Time.now.strftime(call).to_s + "\n"
+  end
+
+  def call
     temp = [] # temporary array for sorting
     @params.each { |e| temp << ISO[e.to_sym] }
-    current_format = temp.join
-    Time.now.strftime(current_format).to_s + "\n"
+    temp.join
   end
 
   def valid?
