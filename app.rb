@@ -9,10 +9,6 @@ class App
     end
   end
 
-  def valid_url?(request)
-    request.fullpath[1..12] != 'time?format='
-  end
-
   def response_with(code, message)
     response = Rack::Response.new
     response.status = code
@@ -28,5 +24,11 @@ class App
     else
       response_with(400, "Unknown time format [#{processing.excess.join(',')}] \n")
     end
+  end
+
+  private
+
+  def valid_url?(request)
+    request.fullpath[1..12] != 'time?format='
   end
 end

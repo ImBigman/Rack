@@ -1,10 +1,9 @@
-class TimeFormatter
-  FORMATS = %w[year month day hour minute second].freeze
+class TimeFormatter  
   ISO = { year: '%Y', month: '-%m', day: '-%d', hour: ' %H:', minute: '%M', second: '%S' }.freeze
 
   def initialize(params)
     @params = params
-    @invalid_params = @params - FORMATS
+    @invalid_params = @params - ISO.keys.map(&:to_s)
   end
 
   def result
